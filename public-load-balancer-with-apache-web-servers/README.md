@@ -48,8 +48,8 @@ to work with that constraint (see [Sandbox notes](#sandbox-notes) below).
 1. **Clone the repo**
 
    ```bash
-   git clone https://github.com/<your-username>/<repo-name>.git
-   cd <repo-name>
+   git clone https://github.com/kalebmohr/azure-network-architecture.git
+   cd public-load-balancer-with-apache-web-servers
    ```
 
 2. **Set your variables**
