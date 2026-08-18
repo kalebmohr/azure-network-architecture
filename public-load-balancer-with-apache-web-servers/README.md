@@ -48,7 +48,8 @@ to work with that constraint (see [Sandbox notes](#sandbox-notes) below).
 1. **Clone the repo**
 
    ```bash
-   git clone https://github.com/kalebmohr/azure-network-architecture/public-load-balancer-with-apache-web-servers.git
+   git clone https://github.com/kalebmohr/azure-network-architecture.git
+   cd azure-network-architecture
    cd public-load-balancer-with-apache-web-servers
    ```
 
