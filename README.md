@@ -19,7 +19,7 @@ Note: This repository is actively updated as I build and document new lab topolo
 - **Tooling:** Azure CLI, Git
 
 ## 💡 Reuse
-If you are looking to reuse any of the architecture labs in this repository, I recommend first creating a resource group in your Azure cloud environment, then copying the `main.tf` files you see in the project folder, and adjusting the following variable block:
+If you are looking to reuse any of the architecture labs in this repository, I recommend first creating a resource group in your **NON-PROD/LAB** Azure cloud environment, then copying the `main.tf` files you see in the project folder, and adjusting the following variable block:
 ```terraform
 variable "resource_group_name" {
     description = "Existing resource group to be targeted for the lab architecture. All the lab resources will go here."
