@@ -1,32 +1,3 @@
-##############################################################################
-# Azure Multi-VM Web Load Balancer — Lab Deployment
-#
-# This Terraform configuration deploys a demo web-tier architecture in
-# Azure consisting of:
-#   - A dedicated VNet and subnet for web servers
-#   - Three Ubuntu Linux VMs, each provisioned with Apache via a
-#     CustomScript extension
-#   - A Standard SKU public Load Balancer distributing inbound HTTP (80)
-#     traffic across all three VMs via a backend pool
-#   - An NSG permitting inbound HTTP from the internet, and an explicit
-#     outbound SNAT rule for VM egress
-#
-# Purpose: This is a LAB / PORTFOLIO DEMO environment intended to
-# illustrate Azure networking, load balancing, and IaC patterns with
-# Terraform. It is NOT hardened, NOT reviewed for production security
-# posture, and NOT intended for production use.
-#
-#   ⚠ DO NOT DEPLOY THIS TO A PRODUCTION ENVIRONMENT AS-IS. ⚠
-#
-# Notably out of scope for production readiness: NSG rules are
-# intentionally permissive (HTTP open to "Internet"), there's no HA
-# validation beyond LB probes, no monitoring/alerting, no backup/DR,
-# and admin credentials are passed via variable rather than a secrets
-# vault (e.g. Azure Key Vault).
-#
-# Architecture and code designed by Kaleb Mohr.
-##############################################################################
-
 terraform {
   required_version = ">= 1.5.0"
 
@@ -43,11 +14,7 @@ provider "azurerm" {
   skip_provider_registration = true
 }
 
-##############################################################################
 # Variables
-# Note: Update your admin username and resource group names to fit your Azure lab.
-##############################################################################
-
 variable "resource_group_name" {
   description = "Existing resource group that will hold all lab resources."
   type        = string
@@ -72,28 +39,20 @@ variable "admin_password" {
   sensitive   = true
 }
 
-##############################################################################
 # Resource Group
-#
-# Sandbox subscriptions pre-provision a single resource group and don't
-# allow creating new ones, so it's looked up here rather than created.
-##############################################################################
-
 data "azurerm_resource_group" "this" {
   name = var.resource_group_name
 }
 
-##############################################################################
-# Networking - VNet, Subnet, NSG
-##############################################################################
-
+## Networking ##
+# lab-eus-web-services-vnet
 resource "azurerm_virtual_network" "lab_eus_web_services_vnet" {
   name                = "lab-eus-web-services-vnet"
   location            = var.region_location
   resource_group_name = data.azurerm_resource_group.this.name
   address_space       = ["10.1.0.0/16"]
 }
-
+# Subnet for lab-eus-web-services-vnet
 resource "azurerm_subnet" "lab_eus_web_server_subnet" {
   name                 = "lab-eus-web-server-subnet"
   resource_group_name  = data.azurerm_resource_group.this.name
@@ -125,10 +84,7 @@ resource "azurerm_subnet_network_security_group_association" "lab_eus_web_server
   network_security_group_id = azurerm_network_security_group.lab_eus_web_nsg.id
 }
 
-##############################################################################
-# Public IP (attached to the load balancer's frontend)
-##############################################################################
-
+# Public IP
 resource "azurerm_public_ip" "lab_eus_web_lb_public_ip" {
   name                = "lab-eus-web-lb-public-ip"
   location            = var.region_location
@@ -138,10 +94,7 @@ resource "azurerm_public_ip" "lab_eus_web_lb_public_ip" {
   zones               = ["1", "2", "3"]
 }
 
-##############################################################################
 # Network Interfaces
-##############################################################################
-
 resource "azurerm_network_interface" "lab_eus_web01_nic" {
   name                            = "lab-eus-web01-nic"
   location                        = var.region_location
@@ -184,10 +137,8 @@ resource "azurerm_network_interface" "lab_eus_web03_nic" {
   }
 }
 
-##############################################################################
-# Virtual Machines & Extensions
-##############################################################################
-
+## Virtual Machines & Extensions ##
+# LAB-EUS-WEB01
 resource "azurerm_linux_virtual_machine" "lab_eus_web01" {
   name                            = "LAB-EUS-WEB01"
   resource_group_name             = data.azurerm_resource_group.this.name
@@ -227,7 +178,7 @@ resource "azurerm_virtual_machine_extension" "web01_install_apache" {
     }
   SETTINGS
 }
-
+# LAB-EUS-WEB02
 resource "azurerm_linux_virtual_machine" "lab_eus_web02" {
   name                            = "LAB-EUS-WEB02"
   resource_group_name             = data.azurerm_resource_group.this.name
@@ -267,7 +218,7 @@ resource "azurerm_virtual_machine_extension" "web02_install_apache" {
     }
   SETTINGS
 }
-
+# LAB-EUS-WEB03
 resource "azurerm_linux_virtual_machine" "lab_eus_web03" {
   name                            = "LAB-EUS-WEB03"
   resource_group_name             = data.azurerm_resource_group.this.name
@@ -308,10 +259,8 @@ resource "azurerm_virtual_machine_extension" "web03_install_apache" {
   SETTINGS
 }
 
-##############################################################################
-# Load Balancer
-##############################################################################
-
+## Load Balancer ##
+# lab-eus-web-lb
 resource "azurerm_lb" "lab_eus_web_lb" {
   name                = "lab-eus-web-lb"
   location            = var.region_location
