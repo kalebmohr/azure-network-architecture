@@ -18,7 +18,7 @@ provider "azurerm" {
 variable "resource_group_name" {
   description = "Existing resource group that will hold all lab resources."
   type        = string
-  default     = "put-your-rg-here"
+  default     = "PUT_YOUR_RESOURCE_GROUP_HERE"
 }
 
 variable "region_location" {
