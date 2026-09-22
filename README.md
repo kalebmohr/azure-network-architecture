@@ -10,11 +10,26 @@ In general, this repository focuses on the following core technologies:
 - **Hybrid Interconnects:** Azure ExpressRoute & Site-to-Site VPN Gateway Architectures
 - **Application & Content Delivery:** Azure Load Balancer, Application Gateway, Azure Front Door, and Traffic Manager
 
-You might find a lackluster of published content from the above focus areas. If that is the case, it means I haven't gotten to that specific topic yet, and it will be a future project.
+Note: This repository is actively updated as I build and document new lab topologies. Topics marked above reflect current lab modules and upcoming design architectures.
 
 
 ## 🛠️ Tech Stack
-- **Cloud:** Microsoft Azure (the bread and the butter!)
-- **IaC:** Terraform / Bicep (for automating deploment!)
-- **Tooling:** Azure CLI, Git (for troubleshooting and code version control!)
+- **Cloud:** Microsoft Azure
+- **IaC:** Terraform / Bicep
+- **Tooling:** Azure CLI, Git
 
+## 💡 Reuse
+If you are looking to reuse any of the architecture labs in this repository, I recommend first creating a resource group in your Azure cloud environment, then copying the `main.tf` files you see in the project folder, and adjusting the following variable block:
+```terraform
+variable "resource_group_name" {
+    description = "Existing resource group to be targeted for the lab architecture. All the lab resources will go here."
+    type        = string
+    default     = "PUT_YOUR_RESOURCE_GROUP_HERE"
+}
+```
+I try to keep my IaC standardized so it's easily transferrable between Azure topologies. Once you have modified the resource group name, it should work in your Azure environment (as long as you have authenticated via `az cli` of course!)
+
+## ⚠️ A Word of Caution
+While these lab configurations represent functional, working architectures, they are designed strictly for sandbox and educational environments.
+
+They serve as foundational stepping stones rather than production-ready cloud designs and do not include enterprise hardening, remote state management, or compliance controls. Deploy at your own risk.
