@@ -24,7 +24,7 @@ If you are looking to reuse any of the architecture labs in this repository, I r
 variable "resource_group_name" {
     description = "Existing resource group to be targeted for the lab architecture. All the lab resources will go here."
     type        = string
-    default     = "PUT_YOUR_RESOURCE_GROUP_HERE"
+    default     = "PUT_YOUR_RESOURCE_GROUP_HERE" # Modify this string value to be the name of your resource group you created.
 }
 ```
 I try to keep my IaC standardized so it's easily transferrable between Azure topologies. Once you have modified the resource group name, it should work in your Azure lab environment (as long as you have authenticated via `az cli` of course!)
