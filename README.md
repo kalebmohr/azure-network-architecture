@@ -19,7 +19,7 @@ Note: This repository is actively updated as I build and document new lab topolo
 - **Tooling:** Azure CLI, Git
 
 ## 💡 Reuse
-If you are looking to reuse any of the architecture labs in this repository, I recommend first creating a resource group in your **LAB** Azure cloud environment, then copying the `main.tf` files you see in the project folder, and adjusting the following variable block:
+If you are looking to reuse any of the architecture labs in this repository, I recommend first creating a resource group in your **LAB** Azure cloud environment first. Once you've cloned this git repo, edit the `main.tf` files you see in the project folder you're interested in, and adjust the following variable block:
 ```terraform
 variable "resource_group_name" {
     description = "Existing resource group to be targeted for the lab architecture. All the lab resources will go here."
@@ -27,7 +27,7 @@ variable "resource_group_name" {
     default     = "PUT_YOUR_RESOURCE_GROUP_HERE"
 }
 ```
-I try to keep my IaC standardized so it's easily transferrable between Azure topologies. Once you have modified the resource group name, it should work in your Azure environment (as long as you have authenticated via `az cli` of course!)
+I try to keep my IaC standardized so it's easily transferrable between Azure topologies. Once you have modified the resource group name, it should work in your Azure lab environment (as long as you have authenticated via `az cli` of course!)
 
 ## ⚠️ A Word of Caution
 While these lab configurations represent functional, working architectures, they are designed strictly for sandbox and educational environments.
