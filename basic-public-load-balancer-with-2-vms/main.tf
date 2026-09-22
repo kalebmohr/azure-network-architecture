@@ -1,15 +1,3 @@
-##############################################################################
-# Azure Lab Environment - Load-Balanced Windows VMs with Public RDP
-#
-# Deploys two Windows Server 2025 VMs behind a Standard Load Balancer, with
-# a public IP and NSG rule exposing RDP (3389) to the internet.
-#
-# WARNING: This configuration intentionally opens RDP to 0.0.0.0/0.
-# It is intended for short-lived, disposable lab/sandbox environments only.
-# Do not reuse this NSG rule in any environment that holds real data.
-# By: Kaleb Mohr
-##############################################################################
-
 terraform {
   required_version = ">= 1.5.0"
 
@@ -26,11 +14,7 @@ provider "azurerm" {
   skip_provider_registration = true
 }
 
-##############################################################################
 # Variables
-# Note: Update your admin username and resource group names to fit your Azure lab.
-##############################################################################
-
 variable "resource_group_name" {
   description = "Existing resource group that will hold all lab resources."
   type        = string
@@ -55,21 +39,15 @@ variable "admin_password" {
   sensitive   = true
 }
 
-##############################################################################
-# Resource Group
-#
-# Sandbox subscriptions pre-provision a single resource group and don't
-# allow creating new ones, so it's looked up here rather than created.
-##############################################################################
 
+# Resource Group
 data "azurerm_resource_group" "this" {
   name = var.resource_group_name
 }
 
-##############################################################################
-# Networking - VNet, Subnet, NSG
-##############################################################################
+## Networking ##
 
+# LAB-EUS-VNET
 resource "azurerm_virtual_network" "lab_eus_vnet" {
   name                = "lab-eus-vnet"
   location            = var.region_location
@@ -77,6 +55,7 @@ resource "azurerm_virtual_network" "lab_eus_vnet" {
   address_space       = ["10.1.0.0/16"]
 }
 
+# Subnet for LAB-EUS-VNET
 resource "azurerm_subnet" "lab_eus_vnet_subnet" {
   name                 = "lab-resource-subnet"
   resource_group_name  = data.azurerm_resource_group.this.name
@@ -108,11 +87,7 @@ resource "azurerm_subnet_network_security_group_association" "lab_eus_subnet_nsg
   subnet_id                 = azurerm_subnet.lab_eus_vnet_subnet.id
   network_security_group_id = azurerm_network_security_group.lab_eus_nsg.id
 }
-
-##############################################################################
-# Public IP (attached to the load balancer's frontend)
-##############################################################################
-
+# Public IP
 resource "azurerm_public_ip" "lab_eus_lb_pip" {
   name                = "lab-eus-lb-pip"
   location            = var.region_location
@@ -122,10 +97,8 @@ resource "azurerm_public_ip" "lab_eus_lb_pip" {
   zones               = ["1", "2", "3"]
 }
 
-##############################################################################
 # Network Interfaces
-##############################################################################
-
+# LAB-EUS-VM01-NIC
 resource "azurerm_network_interface" "lab_eus_vm01_nic" {
   name                            = "lab-eus-vm01-nic"
   location                        = var.region_location
@@ -139,7 +112,7 @@ resource "azurerm_network_interface" "lab_eus_vm01_nic" {
     primary                       = true
   }
 }
-
+# LAB-EUS-VM02-NIC
 resource "azurerm_network_interface" "lab_eus_vm02_nic" {
   name                            = "lab-eus-vm02-nic"
   location                        = var.region_location
@@ -154,13 +127,8 @@ resource "azurerm_network_interface" "lab_eus_vm02_nic" {
   }
 }
 
-##############################################################################
-# Virtual Machines - Windows Server 2025 Datacenter (Azure Edition)
-#
-# Standard_DS2_v2 is required (not DS1_v2) because accelerated networking
-# needs 2+ vCPUs.
-##############################################################################
-
+## Virtual Machines ##
+# LAB-EUS-VM01 
 resource "azurerm_windows_virtual_machine" "lab_eus_vm01" {
   name                = "LAB-EUS-VM01"
   location            = var.region_location
@@ -197,7 +165,7 @@ resource "azurerm_windows_virtual_machine" "lab_eus_vm01" {
     storage_account_uri = null
   }
 }
-
+# LAB-EUS-VM02
 resource "azurerm_windows_virtual_machine" "lab_eus_vm02" {
   name                = "LAB-EUS-VM02"
   location            = var.region_location
@@ -235,10 +203,8 @@ resource "azurerm_windows_virtual_machine" "lab_eus_vm02" {
   }
 }
 
-##############################################################################
 # Load Balancer
-##############################################################################
-
+# lab-eus-lb01
 resource "azurerm_lb" "lab_eus_lb01" {
   name                = "lab-eus-lb01"
   location            = var.region_location
