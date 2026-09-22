@@ -34,7 +34,7 @@ provider "azurerm" {
 variable "resource_group_name" {
   description = "Existing resource group that will hold all lab resources."
   type        = string
-  default     = "update-this-resource-group-name-to-your-target-rg"
+  default     = "PUT_YOUR_RESOURCE_GROUP_HERE"
 }
 
 variable "region_location" {
